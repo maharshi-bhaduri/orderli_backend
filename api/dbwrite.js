@@ -1,5 +1,5 @@
 module.exports = (req, res) => {
-    res.json({
-        hello: 'world'
-    })
-}
+  res.json({
+    hello: "worlds",
+  });
+};
