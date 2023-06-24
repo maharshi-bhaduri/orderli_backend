@@ -5,6 +5,14 @@ const prisma = new PrismaClient();
 // Serverless function to get all menu items
 export default async (req, res) => {
     try {
+        const tables = await prisma.$queryRaw('SHOW TABLES');
+        console.log('Tables:', tables);
+    } catch (error) {
+        console.error('Error logging tables:', error);
+    } finally {
+        await prisma.$disconnect();
+    }
+    try {
         await prisma.$connect();
         console.log('Connected to the database');
         const menuItems = await prisma.menu.findMany();
