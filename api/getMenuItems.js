@@ -5,7 +5,13 @@ const prisma = new PrismaClient();
 // Serverless function to get all menu items
 export default async (req, res) => {
     try {
-        const menuItems = await prisma.menu.findMany();
+        const menuItems = await prisma.menu.findMany({
+            where: {
+                provider_id: {
+                    equals: parseInt(req.query.providerId)
+                }
+            }
+        });
 
         res.status(200).json(menuItems);
     } catch (error) {
