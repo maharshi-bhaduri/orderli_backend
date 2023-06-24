@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 // Serverless function to create a new menu item
-export async function createMenuItem(req, res) {
+export default async (req, res) => {
     try {
         const { providerId, itemName, description, price } = req.body;
 

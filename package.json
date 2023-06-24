@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "^4.16.1",
     "@vercel/kv": "^0.2.2",
     "mysql": "^2.18.1",
     "prisma": "^4.16.1"

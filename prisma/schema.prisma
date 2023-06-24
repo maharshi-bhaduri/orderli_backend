@@ -8,7 +8,7 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model ProviderDetails {
+model provider_details {
   provider_id    Int       @id @default(autoincrement())
   provider_name  String
   provider_type  String
@@ -29,7 +29,7 @@ model ProviderDetails {
   updated_at     DateTime @updatedAt
 }
 
-model Menu {
+model menu {
   menu_id      Int      @id @default(autoincrement())
   provider_id  Int?
   item_name    String?

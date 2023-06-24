@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 // Serverless function to get all providers
-export async function getProviders(req, res) {
+export default async (req, res) => {
     try {
         const providers = await prisma.providerDetails.findMany();
 
