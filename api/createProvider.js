@@ -5,12 +5,13 @@ const prisma = new PrismaClient();
 // Serverless function to create a new provider
 export default async (req, res) => {
     try {
-        const { providerName, providerType, address, city, state, country, postalCode, owner, website } = req.body;
+        const { providerName, providerType, providerHandle, address, city, state, country, postalCode, owner, website } = req.body;
 
         const provider = await prisma.provider_details.create({
             data: {
                 provider_name: providerName,
                 provider_type: providerType,
+                provider_handle: providerHandle,
                 address,
                 city,
                 state,

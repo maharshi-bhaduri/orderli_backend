@@ -9,8 +9,8 @@
             "dest": "api/createMenuItem.js"
         },
         {
-            "src": "/api/get-providers",
-            "dest": "api/getProviders.js"
+            "src": "/api/get-provider-details",
+            "dest": "api/getProviderDetails.js"
         },
         {
             "src": "/api/get-menu-items",
