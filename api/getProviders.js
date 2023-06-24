@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 // Serverless function to get all providers
 export default async (req, res) => {
     try {
-        const providers = await prisma.providerDetails.findMany();
+        const providers = await prisma.provider_details.findMany();
 
         res.status(200).json(providers);
     } catch (error) {

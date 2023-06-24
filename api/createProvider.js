@@ -7,7 +7,7 @@ export default async (req, res) => {
     try {
         const { providerName, providerType, address, city, state, country, postalCode, owner, website } = req.body;
 
-        const provider = await prisma.providerDetails.create({
+        const provider = await prisma.provider_details.create({
             data: {
                 provider_name: providerName,
                 provider_type: providerType,
