@@ -1,9 +1,9 @@
-
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export default async function handler(req, res) {
+// Serverless function to get all menu items
+export default async (req, res) => {
     try {
         const menuItems = await prisma.menu.findMany();
 
