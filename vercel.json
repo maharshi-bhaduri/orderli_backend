@@ -1,0 +1,20 @@
+{
+    "routes": [
+        {
+            "src": "/api/create-provider",
+            "dest": "api/createProvider.js"
+        },
+        {
+            "src": "/api/create-menu-item",
+            "dest": "api/createMenuItem.js"
+        },
+        {
+            "src": "/api/get-providers",
+            "dest": "api/getProviders.js"
+        },
+        {
+            "src": "/api/get-menu-items",
+            "dest": "api/getMenuItems.js"
+        }
+    ]
+}
