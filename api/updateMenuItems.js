@@ -20,9 +20,10 @@ export default async function main(req, res) {
         menu_id: { equals: parseInt(menuId) },
       },
       data: {
+        provider_id: parseInt(providerId),
         item_name: itemName,
         description,
-        price,
+        price: parseInt(price),
         updated_at,
       },
     });

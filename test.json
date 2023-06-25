@@ -1,0 +1,16 @@
+{
+    "menuId":"8",
+    "providerId":"2"
+    "menuItems":[
+        {
+            "itemName":"Rezala",
+            "description":"Indian and spicy",
+            "price":16
+        },
+        {
+            "itemName":"Biriyani",
+            "description":"biriyani is unparalled",
+            "price":20
+        }
+    ]
+}

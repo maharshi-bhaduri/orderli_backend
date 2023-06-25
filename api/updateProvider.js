@@ -33,7 +33,7 @@ export default async function main(req, res) {
         website,
       },
     });
-    res.status(200).send("provider details have been update successfully");
+    res.status(200).json(updateProvider);
   } catch (error) {
     console.error("Error udpating provider:", error);
     res.status(500).json({ error: "An error occured" });
