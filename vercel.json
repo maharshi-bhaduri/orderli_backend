@@ -1,20 +1,36 @@
 {
-    "routes": [
-        {
-            "src": "/api/create-provider",
-            "dest": "api/createProvider.js"
-        },
-        {
-            "src": "/api/create-menu-item",
-            "dest": "api/createMenuItem.js"
-        },
-        {
-            "src": "/api/get-provider-details",
-            "dest": "api/getProviderDetails.js"
-        },
-        {
-            "src": "/api/get-menu-items",
-            "dest": "api/getMenuItems.js"
-        }
-    ]
+  "routes": [
+    {
+      "src": "/api/create-provider",
+      "dest": "api/createProvider.js"
+    },
+    {
+      "src": "/api/create-menu-item",
+      "dest": "api/createMenuItem.js"
+    },
+    {
+      "src": "/api/get-provider-details",
+      "dest": "api/getProviderDetails.js"
+    },
+    {
+      "src": "/api/get-menu-items",
+      "dest": "api/getMenuItems.js"
+    },
+    {
+      "src": "/api/delete-provider",
+      "dest": "api/deleteProvider.js"
+    },
+    {
+      "src": "/api/delete-menu-items",
+      "dest": "api/deleteMenuItems.js"
+    },
+    {
+      "src": "/api/update-provider",
+      "dest": "api/updateProvider.js"
+    },
+    {
+      "src": "/api/update-menu-items",
+      "dest": "api/updateMenuItems.js"
+    }
+  ]
 }
