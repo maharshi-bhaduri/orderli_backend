@@ -1,18 +1,20 @@
+// Serverless function to create a new provider
+
 import { PrismaClient } from '@prisma/client';
+import { allowCors, resUtil } from '../utils/utils';
 import qrcode from 'qrcode';
 
 const prisma = new PrismaClient();
 
-// Serverless function to create a new provider
-export default async (req, res) => {
+const handler = async (req, res) => {
     try {
-        const { providerName, providerType, providerHandle, address, city, state, country, postalCode, owner, website } = req.body;
-
-        const provider = await prisma.provider_details.create({
+        const { providerName, providerType, providerHandle, about, address, city, state, country, postalCode, owner, website } = req.body;
+        prisma.provider_details.create({
             data: {
                 provider_name: providerName,
                 provider_type: providerType,
                 provider_handle: providerHandle,
+                about,
                 address,
                 city,
                 state,
@@ -32,21 +34,20 @@ export default async (req, res) => {
                 }
             });
 
-        const response = {
-            qrCodeURL: qrCodeDataURL,
-            operationStatus: {
-                status: '201',
-                description: 'Provider was successfully registered.'
-            }
-        }
-
-        // Set the appropriate headers
-        res.setHeader('Content-Type', 'application/json');
-
-        // Send the response as JSON
-        res.status(201).json(response);
+        resUtil(
+            res,
+            200,
+            'Provider was successfully registered.',
+            { qrCodeDataURL: qrCodeDataURL }
+        )
     } catch (error) {
         console.error('Error creating provider:', error);
-        res.status(500).json({ error: 'An error occurred' });
+        resUtil(
+            res,
+            500,
+            'An error occurred.'
+        )
     }
 }
+
+module.exports = allowCors(handler)
