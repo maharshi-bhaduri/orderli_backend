@@ -3,6 +3,13 @@
 import { PrismaClient } from "@prisma/client";
 import { allowCors, resUtil } from "../utils/utils";
 import qrcode from "qrcode";
+import * as admin from "firebase-admin";
+import credentials from "../credentials.json";
+import { getAuth, verifyIdToken } from "firebase/auth";
+
+const adminapp = admin.initializeApp({
+  credential: admin.credential.cert(credentials),
+});
 
 const prisma = new PrismaClient();
 
@@ -21,21 +28,39 @@ const handler = async (req, res) => {
       owner,
       website,
     } = req.body;
-    await prisma.provider_details.create({
-      data: {
-        provider_name: providerName,
-        provider_type: providerType,
-        provider_handle: providerHandle,
-        about,
-        address,
-        city,
-        state,
-        country,
-        postal_code: postalCode,
-        owner,
-        website,
-      },
-    });
+    const { authorization, uid } = req.headers;
+    console.log("before authorization");
+
+    try {
+      admin
+        .auth()
+        .verifyIdToken(authorization)
+        .then((decodedToken) => {
+          console.log(decodedToken);
+        })
+        .catch((error) => {
+          console.error(error);
+          return resUtil(res, 401, "bad response");
+        });
+    } catch (err) {
+      console.error(err);
+    }
+    console.log("after authorization");
+    // await prisma.provider_details.create({
+    //   data: {
+    //     provider_name: providerName,
+    //     provider_type: providerType,
+    //     provider_handle: providerHandle,
+    //     about,
+    //     address,
+    //     city,
+    //     state,
+    //     country,
+    //     postal_code: postalCode,
+    //     owner,
+    //     website,
+    //   },
+    // });
 
     // Generate the QR code as a data URL
     const qrCodeDataURL = await qrcode.toDataURL(
