@@ -1,3 +1,5 @@
+import * as admin from "firebase-admin";
+
 function resUtil(res, statuscode, message, data) {
     const response = {
         operationStatus: {
@@ -8,6 +10,31 @@ function resUtil(res, statuscode, message, data) {
     };
     return res.status(statuscode).json(response);
 }
+
+const verifyAuth = (fn) => async (req, res) => {
+    const serviceAccount = JSON.parse(
+        process.env.FIREBASE_SERVICE_ACCOUNT_KEY
+    );
+    const adminapp = admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+    });
+    const { authorization, uid } = req.headers;
+
+    try {
+        admin
+            .auth()
+            .verifyIdToken(authorization)
+            .then((decodedToken) => {
+                console.log("Operation authorized. Proceeding with the request.");
+            })
+            .catch((error) => {
+                return resUtil(res, 401, "Unauthorized access detected.");
+            });
+    } catch (err) {
+        return resUtil(res, 501, "Operation cannot be authorized at this time. Please try again later.");
+    }
+    return await fn(req, res);
+};
 
 const allowCors = (fn) => async (req, res) => {
     res.setHeader("Access-Control-Allow-Credentials", true);
@@ -22,10 +49,9 @@ const allowCors = (fn) => async (req, res) => {
     );
     if (req.method === "OPTIONS") {
         res.status(200).end();
-        console.log("gg")
         return;
     }
     return await fn(req, res);
 };
 
-module.exports = { allowCors, resUtil };
+module.exports = { allowCors, resUtil, verifyAuth };

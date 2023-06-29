@@ -1,15 +1,8 @@
 // Serverless function to create a new provider
 
 import { PrismaClient } from "@prisma/client";
-import { allowCors, resUtil } from "../utils/utils";
+import { allowCors, resUtil, verifyAuth } from "../utils/utils";
 import qrcode from "qrcode";
-import * as admin from "firebase-admin";
-import credentials from "../credentials.json";
-import { getAuth, verifyIdToken } from "firebase/auth";
-
-const adminapp = admin.initializeApp({
-  credential: admin.credential.cert(credentials),
-});
 
 const prisma = new PrismaClient();
 
@@ -28,22 +21,6 @@ const handler = async (req, res) => {
       owner,
       website,
     } = req.body;
-    const { authorization, uid } = req.headers;
-
-    try {
-      admin
-        .auth()
-        .verifyIdToken(authorization)
-        .then((decodedToken) => {
-          console.log(decodedToken);
-        })
-        .catch((error) => {
-          console.error(error);
-          return resUtil(res, 401, "bad response");
-        });
-    } catch (err) {
-      console.error(err);
-    }
 
     await prisma.provider_details.create({
       data: {
@@ -81,4 +58,4 @@ const handler = async (req, res) => {
   }
 };
 
-module.exports = allowCors(handler);
+module.exports = allowCors(verifyAuth(handler));
