@@ -29,7 +29,6 @@ const handler = async (req, res) => {
       website,
     } = req.body;
     const { authorization, uid } = req.headers;
-    console.log("before authorization");
 
     try {
       admin
@@ -45,22 +44,22 @@ const handler = async (req, res) => {
     } catch (err) {
       console.error(err);
     }
-    console.log("after authorization");
-    // await prisma.provider_details.create({
-    //   data: {
-    //     provider_name: providerName,
-    //     provider_type: providerType,
-    //     provider_handle: providerHandle,
-    //     about,
-    //     address,
-    //     city,
-    //     state,
-    //     country,
-    //     postal_code: postalCode,
-    //     owner,
-    //     website,
-    //   },
-    // });
+
+    await prisma.provider_details.create({
+      data: {
+        provider_name: providerName,
+        provider_type: providerType,
+        provider_handle: providerHandle,
+        about,
+        address,
+        city,
+        state,
+        country,
+        postal_code: postalCode,
+        owner,
+        website,
+      },
+    });
 
     // Generate the QR code as a data URL
     const qrCodeDataURL = await qrcode.toDataURL(
