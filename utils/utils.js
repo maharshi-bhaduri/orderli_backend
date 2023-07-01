@@ -1,6 +1,6 @@
 import * as admin from "firebase-admin";
 
-function resUtil(res, statuscode, message, data) {
+function resUtil(res, httpstatuscode, statuscode, message, data) {
     const response = {
         operationStatus: {
             status: statuscode,
@@ -8,7 +8,7 @@ function resUtil(res, statuscode, message, data) {
         },
         data: data,
     };
-    return res.status(statuscode).json(response);
+    return res.status(httpstatuscode).json(response);
 }
 
 const verifyAuth = (fn) => async (req, res) => {
@@ -25,13 +25,14 @@ const verifyAuth = (fn) => async (req, res) => {
             .auth()
             .verifyIdToken(authorization)
             .then((decodedToken) => {
+                req.decodedToken = decodedToken
                 console.log("Operation authorized. Proceeding with the request.");
             })
             .catch((error) => {
-                return resUtil(res, 401, "Unauthorized access detected.");
+                return resUtil(res, 403, "Unauthorized access detected.");
             });
     } catch (err) {
-        return resUtil(res, 501, "Operation cannot be authorized at this time. Please try again later.");
+        return resUtil(res, 500, "Operation cannot be authorized at this time. Please try again later.");
     }
     return await fn(req, res);
 };

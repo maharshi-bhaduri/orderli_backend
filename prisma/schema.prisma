@@ -12,7 +12,7 @@ model provider_details {
   provider_id     Int      @id @default(autoincrement())
   provider_name   String
   provider_type   String
-  provider_handle String?
+  provider_handle String?  @unique
   address         String?
   city            String?
   state           String?
