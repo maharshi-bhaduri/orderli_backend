@@ -18,7 +18,6 @@ const handler = async (req, res) => {
       state,
       country,
       postalCode,
-      owner,
       website,
     } = req.body;
 
@@ -33,7 +32,7 @@ const handler = async (req, res) => {
         state,
         country,
         postal_code: postalCode,
-        owner,
+        owner: req.decodedToken.uid,
         website,
       },
     });
@@ -49,15 +48,12 @@ const handler = async (req, res) => {
       }
     );
 
-    resUtil(res, 200, 200, "Provider was successfully registered.", {
+    resUtil(res, 200, "Provider was successfully registered.", {
       qrCodeDataURL: qrCodeDataURL,
     });
   } catch (error) {
     console.error("Error creating provider:", error);
-    if (error?.code == 'P2002') {
-      resUtil(res, 400, 201, "Unique key constraint failed.");
-    }
-    resUtil(res, 400, 400, "An error occurred.");
+    resUtil(res, 500, "An error occurred.");
   }
 };
 
