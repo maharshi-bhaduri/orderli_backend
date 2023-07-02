@@ -16,6 +16,10 @@
       "dest": "api/getProviderDetails.js"
     },
     {
+      "src": "/api/get-providers",
+      "dest": "api/getProviders.js"
+    },
+    {
       "src": "/api/get-menu-items",
       "dest": "api/getMenuItems.js"
     },

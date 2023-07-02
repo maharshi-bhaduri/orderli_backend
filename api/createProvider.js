@@ -32,7 +32,7 @@ const handler = async (req, res) => {
         state,
         country,
         postal_code: postalCode,
-        owner: req.decodedToken.uid,
+        owner: req.headers.uid,
         website,
       },
     });
@@ -53,7 +53,7 @@ const handler = async (req, res) => {
     });
   } catch (error) {
     console.error("Error creating provider:", error);
-    resUtil(res, 500, "An error occurred.");
+    resUtil(res, 500, "Error: 'Request could not be processed.");
   }
 };
 

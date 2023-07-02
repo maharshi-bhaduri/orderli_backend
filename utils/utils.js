@@ -25,10 +25,13 @@ const verifyAuth = (fn) => async (req, res) => {
             .auth()
             .verifyIdToken(authorization)
             .then((decodedToken) => {
-                req.decodedToken = decodedToken
+                if (req.headers.uid !== decodedToken.uid) {
+                throw new Error("Unauthorized access detected.");
+                }
                 console.log("Operation authorized. Proceeding with the request.");
             })
             .catch((error) => {
+                console.log(error)
                 return resUtil(res, 401, "Unauthorized access detected.");
             });
     } catch (err) {
@@ -52,7 +55,13 @@ const allowCors = (fn) => async (req, res) => {
         res.status(200).end();
         return;
     }
-    return await fn(req, res);
+    try {
+        await fn(req, res);
+      } catch (error) {
+        console.error("An error occurred:", error);
+        resUtil(res, 500, "An error occurred.");
+        return; // Terminate the function after sending the response
+      }
 };
 
 module.exports = { allowCors, resUtil, verifyAuth };
