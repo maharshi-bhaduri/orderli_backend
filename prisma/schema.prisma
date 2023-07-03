@@ -25,6 +25,7 @@ model provider_details {
   social_3        String?
   about           String?
   contact_no      String?
+  qr_data         String?
   rating          Float?
   created_at      DateTime @default(now())
   updated_at      DateTime @updatedAt
