@@ -15,9 +15,11 @@ const verifyAuth = (fn) => async (req, res) => {
     const serviceAccount = JSON.parse(
         process.env.FIREBASE_SERVICE_ACCOUNT_KEY
     );
-    const adminapp = admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
-    });
+    if (!admin.apps.length) {
+        const adminapp = admin.initializeApp({
+            credential: admin.credential.cert(serviceAccount),
+        });
+    }
     const { authorization, uid } = req.headers;
 
     try {
@@ -26,7 +28,7 @@ const verifyAuth = (fn) => async (req, res) => {
             .verifyIdToken(authorization)
             .then((decodedToken) => {
                 if (req.headers.uid !== decodedToken.uid) {
-                throw new Error("Unauthorized access detected.");
+                    throw new Error("Unauthorized access detected.");
                 }
                 console.log("Operation authorized. Proceeding with the request.");
             })
@@ -57,11 +59,11 @@ const allowCors = (fn) => async (req, res) => {
     }
     try {
         await fn(req, res);
-      } catch (error) {
+    } catch (error) {
         console.error("An error occurred:", error);
         resUtil(res, 500, "An error occurred.");
         return; // Terminate the function after sending the response
-      }
+    }
 };
 
 module.exports = { allowCors, resUtil, verifyAuth };
