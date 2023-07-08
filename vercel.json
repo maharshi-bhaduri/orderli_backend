@@ -4,6 +4,10 @@
   ],
   "routes": [
     {
+      "src": "/api/test",
+      "dest": "api/test.js"
+    },
+    {
       "src": "/api/create-provider",
       "dest": "api/createProvider.js"
     },

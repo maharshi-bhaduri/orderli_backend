@@ -41,7 +41,7 @@ const handler = async (req, res) => {
     res.status(200).json(updateProvider);
   } catch (error) {
     console.error("Error udpating provider:", error);
-    res.status(500).json({ error: "An error occured" });
+    res.status(500).json({ error: "An error occured occured." });
   }
 }
 
