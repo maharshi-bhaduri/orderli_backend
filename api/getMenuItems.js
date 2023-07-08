@@ -9,7 +9,7 @@ const handler = async (req, res) => {
         const menuItems = await prisma.menu.findMany({
             where: {
                 provider_handle: {
-                    equals: req.query.providerHandle
+                    equals: req.query.providerHandle ? req.query.providerHandle : null,
                 }
             }
         });
