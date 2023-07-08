@@ -1,12 +1,14 @@
 import { PrismaClient } from "@prisma/client";
+import { allowCors, resUtil, verifyAuth } from "../utils/utils";
 
 const prisma = new PrismaClient();
 
-export default async function main(req, res) {
+const handler = async (req, res) => {
   try {
     const {
-      menuId,
+      menu_id,
       providerId,
+      provider_handle,
       itemName,
       description,
       price,
@@ -16,14 +18,13 @@ export default async function main(req, res) {
 
     const updateMenuItem = await prisma.menu.updateMany({
       where: {
-        provider_id: { equals: parseInt(providerId) },
-        menu_id: { equals: parseInt(menuId) },
+        provider_handle: { equals: provider_handle },
+        menu_id: { equals: parseInt(menu_id) },
       },
       data: {
-        provider_id: parseInt(providerId),
         item_name: itemName,
         description,
-        price: parseInt(price),
+        price: parseFloat(price),
         updated_at,
       },
     });
@@ -35,3 +36,5 @@ export default async function main(req, res) {
       .json({ error: "An error occured while updating menu items" });
   }
 }
+
+module.exports = allowCors(verifyAuth(handler));

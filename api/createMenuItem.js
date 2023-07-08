@@ -1,18 +1,21 @@
 import { PrismaClient } from '@prisma/client';
+import { allowCors, resUtil, verifyAuth } from "../utils/utils";
 
 const prisma = new PrismaClient();
 
 // Serverless function to create a new menu item
-export default async (req, res) => {
+const handler = async (req, res) => {
     try {
-        const { providerId, itemName, description, price } = req.body;
+        const { provider_id, provider_handle, item_name, description, price } = req.body;
+        console.log("req ", req.body)
 
         const menuItem = await prisma.menu.create({
             data: {
-                provider_id: providerId,
-                item_name: itemName,
+                provider_id,
+                provider_handle,
+                item_name,
                 description,
-                price,
+                price: parseInt(price),
             },
         });
 
@@ -22,3 +25,5 @@ export default async (req, res) => {
         res.status(500).json({ error: 'An error occurred' });
     }
 }
+
+module.exports = allowCors(verifyAuth(handler));

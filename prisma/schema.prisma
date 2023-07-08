@@ -32,11 +32,12 @@ model provider_details {
 }
 
 model menu {
-  menu_id     Int      @id @default(autoincrement())
-  provider_id Int?
-  item_name   String?
-  description String?
-  price       Float?
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  menu_id         Int      @id @default(autoincrement())
+  provider_id     Int?
+  provider_handle String
+  item_name       String?
+  description     String?
+  price           Float?
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
 }
