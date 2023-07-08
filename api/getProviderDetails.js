@@ -1,9 +1,10 @@
 import { PrismaClient } from '@prisma/client';
+import { allowCors, resUtil, verifyAuth } from "../utils/utils";
 
 const prisma = new PrismaClient();
 
-// Serverless function to get all providers
-export default async (req, res) => {
+// Serverless function to get provider details
+const handler = async (req, res) => {
     try {
         const providers = await prisma.provider_details.findMany({
             where: {
@@ -19,3 +20,5 @@ export default async (req, res) => {
         res.status(500).json({ error: 'An error occurred' });
     }
 }
+
+module.exports = allowCors(verifyAuth(handler));

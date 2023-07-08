@@ -1,14 +1,15 @@
 import { PrismaClient } from "@prisma/client";
+import { allowCors, resUtil, verifyAuth } from "../utils/utils";
 
 const prisma = new PrismaClient();
 
-export default async function main(req, res) {
+const handler = async (req, res) => {
   try {
-    const { providerId, menuId } = req.body;
+    const { provider_handle, menu_id } = req.body;
     const deleteMenuItems = await prisma.menu.deleteMany({
       where: {
-        provider_id: { equals: parseInt(providerId) },
-        menu_id: { equals: parseInt(menuId) },
+        provider_handle: { equals: provider_handle },
+        menu_id: { equals: parseInt(menu_id) },
       },
     });
 
@@ -18,3 +19,5 @@ export default async function main(req, res) {
     res.status(500).json({ error: "an error occured" });
   }
 }
+
+module.exports = allowCors(verifyAuth(handler));
