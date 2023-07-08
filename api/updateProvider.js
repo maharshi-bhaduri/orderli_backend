@@ -1,35 +1,40 @@
 import { PrismaClient } from "@prisma/client";
+import { allowCors, resUtil, verifyAuth } from "../utils/utils";
 const prisma = new PrismaClient();
 
-export default async function main(req, res) {
+const handler = async (req, res) => {
   try {
     const {
-      providerId,
-      providerName,
-      providerType,
-      providerHandle,
+      provider_id,
+      provider_name,
+      provider_type,
+      provider_handle,
       address,
       city,
       state,
       country,
-      postalCode,
+      postal_code,
+      contact_no,
       owner,
+      about,
       website,
     } = req.body;
     const updateProvider = await prisma.provider_details.update({
       where: {
-        provider_id: parseInt(providerId),
+        provider_id: parseInt(provider_id),
       },
       data: {
-        provider_name: providerName,
-        provider_handle: providerHandle,
-        postal_code: postalCode,
-        provider_type: providerType,
+        provider_name,
+        provider_handle,
+        postal_code,
+        provider_type,
         address,
         city,
         state,
         country,
         owner,
+        contact_no,
+        about,
         website,
       },
     });
@@ -39,3 +44,5 @@ export default async function main(req, res) {
     res.status(500).json({ error: "An error occured" });
   }
 }
+
+module.exports = allowCors(verifyAuth(handler));
