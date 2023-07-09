@@ -1,7 +1,5 @@
 {
-  "regions": [
-    "bom1"
-  ],
+  "regions": ["bom1"],
   "routes": [
     {
       "src": "/api/test",
@@ -26,6 +24,10 @@
     {
       "src": "/api/get-menu-items",
       "dest": "api/getMenuItems.js"
+    },
+    {
+      "src": "/api/get-menu",
+      "dest": "api/getMenu.js"
     },
     {
       "src": "/api/delete-provider",
