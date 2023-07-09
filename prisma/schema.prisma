@@ -9,35 +9,36 @@ generator client {
 }
 
 model provider_details {
-  provider_id     Int      @id @default(autoincrement())
-  provider_name   String
-  provider_type   String
-  provider_handle String?  @unique
+  providerId     Int      @id @default(autoincrement())
+  providerName   String
+  providerType   String
+  providerHandle String  @unique
   address         String?
   city            String?
   state           String?
   country         String?
-  postal_code     String?
+  postalCode     String?
   owner           String?
   website         String?
-  social_1        String?
-  social_2        String?
-  social_3        String?
-  about           String?
-  contact_no      String?
-  qr_data         String?
-  rating          Float?
-  created_at      DateTime @default(now())
-  updated_at      DateTime @updatedAt
+  social1        String?
+  social2        String?
+  social3        String?
+  about          String?
+  contactNo      String?
+  qrData         String?
+  rating         Float?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  menus          menu[] 
 }
 
 model menu {
-  menu_id         Int      @id @default(autoincrement())
-  provider_id     Int?
-  provider_handle String
-  item_name       String?
-  description     String?
-  price           Float?
-  created_at      DateTime @default(now())
-  updated_at      DateTime @updatedAt
+  menuId         Int      @id @default(autoincrement())
+  provider       provider_details @relation(fields: [providerId], references:[providerId])   
+  providerId     Int
+  itemName       String?
+  description    String?
+  price          Float?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
