@@ -8,13 +8,27 @@ const handler = async (req, res) => {
     try {
         const providers = await prisma.provider_details.findMany({
             where: {
-                provider_handle: {
-                    equals: req.query.providerHandle
-                }
+                AND: [
+                    {
+                        providerHandle: {
+                            equals: req.query.providerHandle,
+                        },
+                    },
+                    {
+                        owner: {
+                            equals: req.headers.uid,
+                        },
+                    },
+                ]
             }
         });
 
-        res.status(200).json(providers);
+        if (providers.length) {
+            res.status(200).json(providers);
+        }
+        else {
+            res.status(403).json({ message: "Unauthorized" });
+        }
     } catch (error) {
         console.error('Error fetching providers:', error);
         res.status(500).json({ error: 'An error occurred' });

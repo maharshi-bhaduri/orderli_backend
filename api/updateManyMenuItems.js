@@ -5,35 +5,35 @@ const prisma = new PrismaClient();
 export default async function main(req, res) {
   try {
     let updateMenuItem;
-    const { providerId, menuItems, updated_at } = req.body;
+    const { providerId, menuItems, updatedAt } = req.body;
     console.log(providerId, menuItems);
 
     for (let i = 0; i < menuItems.length; i++) {
       updateMenuItem = await prisma.menu.updateMany({
         where: {
-          provider_id: { equals: parseInt(providerId) },
-          menu_id: { equals: parseInt(menuItems[i].menuId) },
+          providerId: { equals: parseInt(providerId) },
+          menuId: { equals: parseInt(menuItems[i].menuId) },
         },
         data: {
-          provider_id: parseInt(providerId),
-          item_name: menuItems[i].itemName,
+          providerId: parseInt(providerId),
+          itemName: menuItems[i].itemName,
           description: menuItems[i].description,
           price: parseInt(menuItems[i].price),
-          updated_at,
+          updatedAt,
         },
       });
     }
     // const updateMenuItems = await prisma.menu.updateMany({
     //   where: {
-    //     provider_id: { equals: parseInt(providerId) },
-    //     menu_id: { equals: parseInt(menuId) },
+    //     providerId: { equals: parseInt(providerId) },
+    //     menuId: { equals: parseInt(menuId) },
     //   },
     //   data: {
-    //     provider_id: parseInt(providerId),
-    //     item_name: itemName,
+    //     providerId: parseInt(providerId),
+    //     itemName: itemName,
     //     description,
     //     price: parseInt(price),
-    //     updated_at,
+    //     updatedAt,
     //   },
     // });
     res.status(200).json(updateMenuItem);

@@ -5,14 +5,17 @@ const prisma = new PrismaClient();
 
 const handler = async (req, res) => {
   try {
-    const { provider_handle, menu_id } = req.body;
+    const { providerHandle, menuId } = req.body;
     const deleteMenuItems = await prisma.menu.deleteMany({
       where: {
-        provider_handle: { equals: provider_handle },
-        menu_id: { equals: parseInt(menu_id) },
+        provider: {
+          providerHandle: providerHandle,
+          owner: req.headers.uid
+        },
+        menuId: { equals: parseInt(menuId) },
       },
     });
-
+    console.log("deleteMenuItems ", deleteMenuItems)
     res.status(200).json(deleteMenuItems);
   } catch (error) {
     console.error("Error deleting provider", error);

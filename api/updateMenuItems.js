@@ -6,26 +6,27 @@ const prisma = new PrismaClient();
 const handler = async (req, res) => {
   try {
     const {
-      menu_id,
-      providerId,
-      provider_handle,
+      menuId,
+      providerHandle,
       itemName,
       description,
       price,
-      created_at,
-      updated_at,
+      updatedAt,
     } = req.body;
 
     const updateMenuItem = await prisma.menu.updateMany({
       where: {
-        provider_handle: { equals: provider_handle },
-        menu_id: { equals: parseInt(menu_id) },
+        provider: {
+          providerHandle: providerHandle,
+          owner: req.headers.uid,
+        },
+        menuId: { equals: parseInt(menuId) },
       },
       data: {
-        item_name: itemName,
+        itemName,
         description,
         price: parseFloat(price),
-        updated_at,
+        updatedAt,
       },
     });
     res.status(200).json(updateMenuItem);
