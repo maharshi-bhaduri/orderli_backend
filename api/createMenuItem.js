@@ -6,20 +6,45 @@ const prisma = new PrismaClient();
 // Serverless function to create a new menu item
 const handler = async (req, res) => {
     try {
-        const { provider_id, provider_handle, item_name, description, price } = req.body;
-        console.log("req ", req.body)
+        const { providerHandle, itemName, description, price } = req.body;
 
-        const menuItem = await prisma.menu.create({
-            data: {
-                provider_id,
-                provider_handle,
-                item_name,
-                description,
-                price: parseInt(price),
+        const provider = await prisma.provider_details.findMany({
+            where: {
+                AND: [
+                    {
+                        providerHandle: {
+                            equals: req.query.providerHandle,
+                        },
+                    },
+                    {
+                        owner: {
+                            equals: req.headers.uid,
+                        },
+                    },
+                ]
             },
         });
 
-        res.status(201).json(menuItem);
+        if (provider.length) {
+
+            const menuItem = await prisma.menu.create({
+                data: {
+                    provider: {
+                        connect: {
+                            providerHandle: providerHandle,
+                        },
+                    },
+                    itemName,
+                    description,
+                    price: parseInt(price),
+                },
+            });
+
+            res.status(201).json(menuItem);
+        }
+        else {
+            res.status(403).json({ message: "Unauthorized" });
+        }
     } catch (error) {
         console.error('Error creating menu item:', error);
         res.status(500).json({ error: 'An error occurred' });

@@ -34,18 +34,18 @@ const handler = async (req, res) => {
 
     await prisma.provider_details.create({
       data: {
-        provider_name: providerName,
-        provider_type: providerType,
-        provider_handle: providerHandle,
+        providerName,
+        providerType,
+        providerHandle,
         about,
         address,
         city,
         state,
         country,
-        postal_code: postalCode,
+        postalCode,
         owner: req.headers.uid,
         website,
-        qr_data: qrCodeDataURL
+        qrData: qrCodeDataURL
       },
     });
 
