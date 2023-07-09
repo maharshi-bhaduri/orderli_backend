@@ -1,0 +1,24 @@
+import { PrismaClient } from "@prisma/client";
+import { allowCors, resUtil } from "../utils/utils";
+
+const prisma = new PrismaClient();
+
+// Serverless function to get all menu items
+const handler = async (req, res) => {
+  try {
+    const menuItems = await prisma.menu.findMany({
+      where: {
+        provider_handle: {
+          equals: req.query.providerHandle ? req.query.providerHandle : null,
+        },
+      },
+    });
+
+    res.status(200).json(menuItems);
+  } catch (error) {
+    console.error("Error fetching menu items:", error);
+    res.status(500).json({ error: "An error occurred" });
+  }
+};
+
+module.exports = allowCors(handler);
