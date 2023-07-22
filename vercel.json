@@ -48,6 +48,10 @@
     {
       "src": "/api/update-many-menu-items",
       "dest": "api/updateManyMenuItems.js"
+    },
+    {
+      "src": "/api/get-feedback",
+      "dest": "api/getFeedback.js"
     }
   ]
 }
