@@ -2,8 +2,8 @@
   "regions": ["bom1"],
   "routes": [
     {
-      "src": "/api/root",
-      "dest": "api/APILibrary.js"
+      "src": "/api/get-menu",
+      "dest": "api/index.js"
     }
   ]
 }
