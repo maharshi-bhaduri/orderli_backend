@@ -5,8 +5,6 @@ const prisma = new PrismaClient();
 
 // Serverless function to get all providers
 const handler = async (req, res) => {
-    console.log("hi from get")
-    console.log(req.method)
     try {
         const providers = await prisma.provider_details.findMany({
             where: {
