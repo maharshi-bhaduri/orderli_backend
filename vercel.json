@@ -2,56 +2,8 @@
   "regions": ["bom1"],
   "routes": [
     {
-      "src": "/api/test",
-      "dest": "api/test.js"
-    },
-    {
-      "src": "/api/create-provider",
-      "dest": "api/createProvider.js"
-    },
-    {
-      "src": "/api/create-menu-item",
-      "dest": "api/createMenuItem.js"
-    },
-    {
-      "src": "/api/get-provider-details",
-      "dest": "api/getProviderDetails.js"
-    },
-    {
-      "src": "/api/get-providers",
-      "dest": "api/getProviders.js"
-    },
-    {
-      "src": "/api/get-menu-items",
-      "dest": "api/getMenuItems.js"
-    },
-    {
-      "src": "/api/get-menu",
-      "dest": "api/getMenu.js"
-    },
-    {
-      "src": "/api/delete-provider",
-      "dest": "api/deleteProvider.js"
-    },
-    {
-      "src": "/api/delete-menu-items",
-      "dest": "api/deleteMenuItems.js"
-    },
-    {
-      "src": "/api/update-provider",
-      "dest": "api/updateProvider.js"
-    },
-    {
-      "src": "/api/update-menu-items",
-      "dest": "api/updateMenuItems.js"
-    },
-    {
-      "src": "/api/update-many-menu-items",
-      "dest": "api/updateManyMenuItems.js"
-    },
-    {
-      "src": "/api/get-feedback",
-      "dest": "api/getFeedback.js"
+      "src": "/api/root",
+      "dest": "api/APILibrary.js"
     }
   ]
 }
