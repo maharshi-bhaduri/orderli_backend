@@ -30,6 +30,7 @@ model provider_details {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   menus          menu[] 
+  feedbacks      feedback[]
 }
 
 model menu {
@@ -41,4 +42,18 @@ model menu {
   price          Float?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+}
+
+model feedback {
+  feedbackId        Int    @id @default(autoincrement())
+  provider          provider_details @relation(fields: [providerId], references:[providerId])
+  providerId        Int
+  consumerName      String
+  consumerEmail     String?
+  consumerPhone     String?
+  consumerVisitDate DateTime
+  rating            Float
+  feedbackComments  String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 }

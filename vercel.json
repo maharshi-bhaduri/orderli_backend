@@ -1,53 +1,67 @@
 {
-  "regions": ["bom1"],
+  "regions": [
+    "bom1"
+  ],
   "routes": [
     {
-      "src": "/api/test",
-      "dest": "api/test.js"
+      "src": "/api/service-1",
+      "dest": "api/index.js"
+    },
+    {
+      "src": "/api/service-2",
+      "dest": "api/index.js"
+    },
+    {
+      "src": "/api/service-3",
+      "dest": "api/index.js"
+    },
+    {
+      "src": "/api/service-4",
+      "dest": "api/index.js"
     },
     {
       "src": "/api/create-provider",
-      "dest": "api/createProvider.js"
+      "dest": "api/index.js"
     },
     {
       "src": "/api/create-menu-item",
-      "dest": "api/createMenuItem.js"
+      "dest": "api/index.js"
     },
     {
       "src": "/api/get-provider-details",
-      "dest": "api/getProviderDetails.js"
+      "dest": "api/index.js"
     },
     {
       "src": "/api/get-providers",
-      "dest": "api/getProviders.js"
+      "dest": "api/index.js"
     },
     {
       "src": "/api/get-menu-items",
-      "dest": "api/getMenuItems.js"
+      "dest": "api/index.js"
     },
     {
       "src": "/api/get-menu",
-      "dest": "api/getMenu.js"
+      "dest": "api/index.js"
     },
     {
       "src": "/api/delete-provider",
-      "dest": "api/deleteProvider.js"
+      "dest": "api/index.js"
     },
     {
       "src": "/api/delete-menu-items",
-      "dest": "api/deleteMenuItems.js"
+      "dest": "api/index.js"
     },
     {
       "src": "/api/update-provider",
-      "dest": "api/updateProvider.js"
+      "dest": "api/index.js"
     },
     {
       "src": "/api/update-menu-items",
-      "dest": "api/updateMenuItems.js"
+      "dest": "api/index.js"
     },
     {
-      "src": "/api/update-many-menu-items",
-      "dest": "api/updateManyMenuItems.js"
+      "src": "/api/get-feedback",
+      "dest": "api/index.js"
     }
   ]
 }
