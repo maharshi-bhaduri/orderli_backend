@@ -12,14 +12,14 @@ model provider_details {
   providerId     Int      @id @default(autoincrement())
   providerName   String
   providerType   String
-  providerHandle String  @unique
-  address         String?
-  city            String?
-  state           String?
-  country         String?
+  providerHandle String   @unique
+  address        String?
+  city           String?
+  state          String?
+  country        String?
   postalCode     String?
-  owner           String?
-  website         String?
+  owner          String?
+  website        String?
   social1        String?
   social2        String?
   social3        String?
@@ -29,16 +29,16 @@ model provider_details {
   rating         Float?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
-  menus          menu[] 
+  menus          menu[]
 }
 
 model menu {
-  menuId         Int      @id @default(autoincrement())
-  provider       provider_details @relation(fields: [providerId], references:[providerId])   
-  providerId     Int
-  itemName       String?
-  description    String?
-  price          Float?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  menuId      Int              @id @default(autoincrement())
+  provider    provider_details @relation(fields: [providerId], references: [providerId])
+  providerId  Int
+  itemName    String?
+  description String?
+  price       Float?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
 }
