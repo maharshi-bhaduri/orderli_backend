@@ -9,17 +9,17 @@ generator client {
 }
 
 model provider_details {
-  providerId     Int      @id @default(autoincrement())
+  providerId     Int        @id @default(autoincrement())
   providerName   String
   providerType   String
-  providerHandle String  @unique
-  address         String?
-  city            String?
-  state           String?
-  country         String?
+  providerHandle String     @unique
+  address        String?
+  city           String?
+  state          String?
+  country        String?
   postalCode     String?
-  owner           String?
-  website         String?
+  owner          String?
+  website        String?
   social1        String?
   social2        String?
   social3        String?
@@ -27,26 +27,26 @@ model provider_details {
   contactNo      String?
   qrData         String?
   rating         Float?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  menus          menu[] 
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  menus          menu[]
   feedbacks      feedback[]
 }
 
 model menu {
-  menuId         Int      @id @default(autoincrement())
-  provider       provider_details @relation(fields: [providerId], references:[providerId])   
-  providerId     Int
-  itemName       String?
-  description    String?
-  price          Float?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  menuId      Int              @id @default(autoincrement())
+  provider    provider_details @relation(fields: [providerId], references: [providerId])
+  providerId  Int
+  itemName    String?
+  description String?
+  price       Float?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
 }
 
 model feedback {
-  feedbackId        Int    @id @default(autoincrement())
-  provider          provider_details @relation(fields: [providerId], references:[providerId])
+  feedbackId        Int              @id @default(autoincrement())
+  provider          provider_details @relation(fields: [providerId], references: [providerId])
   providerId        Int
   consumerName      String
   consumerEmail     String?
@@ -54,6 +54,6 @@ model feedback {
   consumerVisitDate DateTime
   rating            Float
   feedbackComments  String
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
 }

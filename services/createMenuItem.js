@@ -13,7 +13,7 @@ const handler = async (req, res) => {
                 AND: [
                     {
                         providerHandle: {
-                            equals: req.query.providerHandle,
+                            equals: providerHandle,
                         },
                     },
                     {
@@ -24,6 +24,7 @@ const handler = async (req, res) => {
                 ]
             },
         });
+        console.log("providers ", provider)
 
         if (provider.length) {
 
