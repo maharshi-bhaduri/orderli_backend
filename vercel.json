@@ -2,7 +2,64 @@
   "regions": ["bom1"],
   "routes": [
     {
+      "src": "/api/service-1",
+      "dest": "api/index.js"
+    },
+    {
+      "src": "/api/service-2",
+      "dest": "api/index.js"
+    },
+    {
+      "src": "/api/service-3",
+      "dest": "api/index.js"
+    },
+    {
+      "src": "/api/service-4",
+      "dest": "api/index.js"
+    },
+
+    {
+      "src": "/api/create-provider",
+      "dest": "api/index.js"
+    },
+    {
+      "src": "/api/create-menu-item",
+      "dest": "api/index.js"
+    },
+    {
+      "src": "/api/get-provider-details",
+      "dest": "api/index.js"
+    },
+    {
+      "src": "/api/get-providers",
+      "dest": "api/index.js"
+    },
+    {
+      "src": "/api/get-menu-items",
+      "dest": "api/index.js"
+    },
+    {
       "src": "/api/get-menu",
+      "dest": "api/index.js"
+    },
+    {
+      "src": "/api/delete-provider",
+      "dest": "api/index.js"
+    },
+    {
+      "src": "/api/delete-menu-items",
+      "dest": "api/index.js"
+    },
+    {
+      "src": "/api/update-provider",
+      "dest": "api/index.js"
+    },
+    {
+      "src": "/api/update-menu-items",
+      "dest": "api/index.js"
+    },
+    {
+      "src": "/api/get-feedback",
       "dest": "api/index.js"
     }
   ]
