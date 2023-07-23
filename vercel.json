@@ -1,5 +1,7 @@
 {
-  "regions": ["bom1"],
+  "regions": [
+    "bom1"
+  ],
   "routes": [
     {
       "src": "/api/service-1",
@@ -17,7 +19,6 @@
       "src": "/api/service-4",
       "dest": "api/index.js"
     },
-
     {
       "src": "/api/create-provider",
       "dest": "api/index.js"
