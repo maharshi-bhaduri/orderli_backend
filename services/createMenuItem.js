@@ -27,7 +27,6 @@ const handler = async (req, res) => {
         console.log("providers ", provider)
 
         if (provider.length) {
-
             const menuItem = await prisma.menu.create({
                 data: {
                     provider: {

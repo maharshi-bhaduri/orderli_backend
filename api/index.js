@@ -30,6 +30,7 @@ router.post("/api/delete-provider", deleteProvider);
 router.post("/api/delete-menu-items", deleteMenuItems);
 router.post("/api/update-provider", updateProvider);
 router.post("/api/update-menu-items", updateMenuItems);
+router.post("/api/update-menu", updateMenu);
 router.get("/api/get-feedback", getFeedback);
 router.get("/api/update-menu", updateMenu);
 router.get("/api/service-2", service2);
