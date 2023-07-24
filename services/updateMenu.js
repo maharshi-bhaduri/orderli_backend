@@ -35,43 +35,29 @@ const handler = async (req, res) => {
 
     const deleteMenuIds = deleteMenuItems.map((item) => item.menuId);
 
-    const updateMenu = await prisma.$transaction(
-      [
-        prisma.menu.deleteMany({ where: { menuId: { in: deleteMenuIds } } }),
-        prisma.resource.createMany({
+    const transaction = await prisma.$transaction([
+      prisma.menu.createMany({
+        data: addMenuItems.map((item) => ({
+          providerId: provider[0].providerId,
+          ...item,
+        })),
+      }),
+      ...updateMenuItems.map((item) =>
+        prisma.menu.updateMany({
+          where: {
+            menuId: item.menuId,
+          },
           data: {
-            provider: {
-              connect: {
-                providerHandle: providerHandle,
-              },
-            },
-            itemName,
-            description,
-            price: parseInt(price),
-          }
-        }),
-      ],
-      {
-        isolationLevel: Prisma.TransactionIsolationLevel.Serializable, // optional, default defined by database configuration
-      }
-    )
+            itemName: item.itemName,
+            description: item.description,
+            price: parseInt(item.price)
+          },
+        })
+      ),
+      prisma.menu.deleteMany({ where: { menuId: { in: deleteMenuIds } } }),
+    ]);
 
-    const updateMenuItem = await prisma.menu.updateMany({
-      where: {
-        provider: {
-          providerHandle: providerHandle,
-          owner: req.headers.uid,
-        },
-        menuId: { equals: parseInt(menuId) },
-      },
-      data: {
-        itemName,
-        description,
-        price: parseFloat(price),
-        updatedAt,
-      },
-    });
-    res.status(200).json(updateMenuItem);
+    res.status(200).json(transaction);
   } catch (error) {
     console.error("Error udpating menu:", error);
     res
