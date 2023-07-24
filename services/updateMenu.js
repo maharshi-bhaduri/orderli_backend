@@ -40,6 +40,7 @@ const handler = async (req, res) => {
         data: addMenuItems.map((item) => ({
           providerId: provider[0].providerId,
           ...item,
+          price: parseFloat(item.price)
         })),
       }),
       ...updateMenuItems.map((item) =>
