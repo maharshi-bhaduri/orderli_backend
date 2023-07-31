@@ -34,14 +34,21 @@ model provider_details {
 }
 
 model menu {
-  menuId      Int              @id @default(autoincrement())
-  provider    provider_details @relation(fields: [providerId], references: [providerId])
-  providerId  Int
-  itemName    String?
-  description String?
-  price       Float?
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
+  menuId       Int              @id @default(autoincrement())
+  provider     provider_details @relation(fields: [providerId], references: [providerId])
+  providerId   Int
+  itemName     String?
+  description  String?
+  price        Float?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  category     String?
+  image        String?
+  dietCategory Int?
+  subcategory1 String?
+  subcategory2 String?
+  subcategory3 String?
+  serves       Int?
 }
 
 model feedback {
