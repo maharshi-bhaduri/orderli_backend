@@ -49,6 +49,7 @@ model menu {
   subcategory2 String?
   subcategory3 String?
   serves       Int?
+  activeFlag   Int?
 }
 
 model feedback {
