@@ -51,7 +51,12 @@ const handler = async (req, res) => {
           data: {
             itemName: item.itemName,
             description: item.description,
-            price: parseInt(item.price)
+            category: item.category,
+            serves: parseInt(item.serves ? item.serves : 1),
+            price: parseFloat(item.price ? item.price : 0),
+            dietCategory: parseFloat(item.dietCategory ? item.dietCategory : 1),
+            activeFlag: parseInt(item.activeFlag),
+            updatedAt: item.updatedAt
           },
         })
       ),
