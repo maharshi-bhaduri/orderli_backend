@@ -13,10 +13,9 @@ const getProviders = require("../services/getProviders");
 const updateMenuItems = require("../services/updateMenuItems");
 const updateProvider = require("../services/updateProvider");
 const updateMenu = require("../services/updateMenu");
-const service2 = require("../services/service2");
-const service3 = require("../services/service3");
+const getFeedbackConsumers = require("../services/getFeedbackConsumers");
+const addFeedbackConsumers = require("../services/addFeedbackConsumers");
 const service4 = require("../services/service4");
-
 
 const router = Router();
 
@@ -33,8 +32,8 @@ router.post("/api/update-menu-items", updateMenuItems);
 router.post("/api/update-menu", updateMenu);
 router.get("/api/get-feedback", getFeedback);
 router.get("/api/update-menu", updateMenu);
-router.get("/api/service-2", service2);
-router.get("/api/service-3", service3);
+router.get("/api/get-feedback-consumers", getFeedbackConsumers);
+router.post("/api/add-feedback-consumers", addFeedbackConsumers);
 router.get("/api/service-4", service4);
 
 function getRoutes(req, res) {
