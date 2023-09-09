@@ -23,6 +23,7 @@ const handler = async (req, res) => {
         feedbackComments,
       },
     });
+    res.status(201).json(addedFeedback);
   } catch (error) {
     console.log("Error adding feedback:", error);
     res.status(500).json({ error: "An error occured" });
