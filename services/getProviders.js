@@ -21,7 +21,6 @@ async function fetchFromD1(sqlQuery, params = []) {
     const data = await response.json();
 
     if (!response.ok) {
-        console.log(response)
         throw new Error(`Error querying D1: ${data.errors || response.statusText}`);
     }
 
@@ -42,7 +41,6 @@ const handler = async (req, res) => {
         const data = await fetchFromD1(sqlQuery, [userId]);
 
         if (data.success && data.result?.[0]?.success) {
-            console.log('here')
             res.status(200).json(data.result[0].results);
         } else {
             console.error('Error in D1 API response:', data.errors);

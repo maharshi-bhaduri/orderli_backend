@@ -33,12 +33,9 @@ const handler = async (req, res) => {
             SELECT * FROM partner_details
             WHERE partnerHandle = ? AND owner = ?
         `;
-        console.log('ownerUid', ownerUid)
-        console.log('partnerHandle', partnerHandle)
 
         // Fetch data from Cloudflare D1
         const data = await fetchFromD1(sqlQuery, [partnerHandle, ownerUid]);
-        console.log('data', data)
 
         if (data.success && data.result?.[0]?.success) {
             res.status(200).json(data.result[0].results);
