@@ -1,0 +1,13 @@
+name = "orderli_backend"
+type = "webpack"
+account_id = "d1f1cc4279ca279ceb8041d040387240"
+workers_dev = true
+route = ""
+zone_id = ""
+
+
+[[d1_databases]]
+binding = "DB" # i.e. available in your Worker on env.DB
+database_name = "snaqr"
+database_id = "9ee57c7e-c405-4375-91b9-9c0cb15900b5"
+

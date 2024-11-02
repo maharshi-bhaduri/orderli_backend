@@ -28,10 +28,9 @@ const verifyAuth = (fn) => async (req, res) => {
             .verifyIdToken(authorization)
             .then((decodedToken) => {
                 if (req.headers.uid !== decodedToken.uid) {
-                    console.log("req.headers.uid ", req.headers.uid)
-                    console.log("decodedToken.uid ", decodedToken.uid)
                     throw new Error("Unauthorized access detected.");
                 }
+                req.headers.decodedUser = decodedToken.uid
                 console.log("Operation authorized. Proceeding with the request.");
             })
             .catch((error) => {
