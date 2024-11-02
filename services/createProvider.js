@@ -103,8 +103,6 @@ const handler = async (req, res) => {
       qrCodeDataURL
     ];
 
-    console.log('Query', sqlQuery)
-    console.log('params', params)
     // Insert data into Cloudflare D1
     const data = await insertIntoD1(sqlQuery, params);
 
