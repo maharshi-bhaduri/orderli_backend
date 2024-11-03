@@ -1,29 +1,65 @@
-import { PrismaClient } from "@prisma/client";
 import { allowCors, resUtil, verifyAuth } from "../utils/utils";
 
-const prisma = new PrismaClient();
+// Define your Cloudflare D1 credentials and endpoint
+const D1_API_URL = process.env.D1_API_URL;
+const D1_API_KEY = process.env.D1_API_KEY;
 
-//serverless function to get the menu items with provider Id as parameter
+// Function to query Cloudflare D1 REST API
+async function fetchFromD1(sqlQuery, params = []) {
+  const response = await fetch(D1_API_URL, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${D1_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      sql: sqlQuery,
+      params,
+    }),
+  });
 
-const handler = async function (req, res) {
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(`Error querying D1: ${data.errors || response.statusText}`);
+  }
+
+  return data;
+}
+
+// Serverless function to get all partners (previously called providers)
+const handler = async (req, res) => {
   try {
-    const feedbackList = await prisma.feedback.findMany({
-      where: {
-        provider: {
-          providerHandle: req.query.providerHandle
-            ? req.query.providerHandle
-            : null,
-          owner: {
-            equals: req.headers.uid,
-          },
-        },
-      },
-    });
-    res.status(200).json(feedbackList);
+    const userId = req.headers.decodedUser;
+    const partnerHandle = req.query.partnerHandle;
+    if (!partnerHandle) {
+      return res.status(400).json({ Error: "partnerHandle is required" });
+    }
+    // Construct SQL query for fetching feedback based on partnerHandle and userId
+    const sqlQuery = `
+            SELECT 
+            f.partnerId, f.feedbackId, f.consumerName, f.consumerEmail, f.consumerPhone, f.rating, f.feedbackComments, 
+            f.createdAt, f.updatedAt 
+            FROM
+              feedback AS f 
+            JOIN 
+              partner_details AS p ON f.partnerId=p.partnerId where p.partnerHandle = ? AND p.owner= ?
+              `;
+
+    // Fetch data from Cloudflare D1
+    const data = await fetchFromD1(sqlQuery, [partnerHandle, userId]);
+
+    if (data.success && data.result?.[0]?.success) {
+      res.status(200).json(data.result[0].results);
+    } else {
+      console.error("Error in D1 API response:", data.errors);
+      throw new Error("D1 API query failed");
+    }
   } catch (error) {
-    console.error("Error fetching feedback list:", error);
-    res.status(500).json({ error: "An error occurred" });
+    console.error("Error fetching partners:", error);
+    res.status(500).json({ Error: "Request could not be processed." });
   }
 };
 
 module.exports = allowCors(verifyAuth(handler));
+// module.exports = allowCors(handler);
