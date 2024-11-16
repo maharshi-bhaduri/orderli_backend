@@ -16,8 +16,9 @@ const updateMenu = require("../services/updateMenu");
 const getFeedbackConsumers = require("../services/getFeedbackConsumers");
 const addFeedbackConsumers = require("../services/addFeedbackConsumers");
 const getPartnerDetailsConsumer = require("../services/getPartnerDetailsConsumer");
-const service4 = require("../services/service4");
-
+const addTable = require("../services/addTable");
+const getTables = require("../services/getTables");
+const updateTable = require("../services/updateTable");
 const router = Router();
 
 router.post("/api/create-provider", createProvider);
@@ -36,8 +37,9 @@ router.get("/api/update-menu", updateMenu);
 router.get("/api/get-feedback-consumers", getFeedbackConsumers);
 router.post("/api/add-feedback-consumers", addFeedbackConsumers);
 router.get("/api/get-partner-details-consumer", getPartnerDetailsConsumer);
-router.get("/api/service-4", service4);
-
+router.post("/api/add-table", addTable);
+router.get("/api/get-tables", getTables);
+router.post("/api/update-table", updateTable);
 function getRoutes(req, res) {
   router(req, res, finalhandler(req, res));
 }
