@@ -41,9 +41,6 @@ const handler = async (req, res) => {
     } = req.body;
 
     const decodedUser = req.headers.decodedUser;
-    console.log('decodedUser', decodedUser)
-    console.log('partnerId', partnerId)
-
     const sqlQuery = `
       UPDATE partner_details
       SET
