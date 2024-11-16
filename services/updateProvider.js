@@ -40,7 +40,9 @@ const handler = async (req, res) => {
       website = ''
     } = req.body;
 
-    const decodedUser = req.decodedUser;
+    const decodedUser = req.headers.decodedUser;
+    console.log('decodedUser', decodedUser)
+    console.log('partnerId', partnerId)
 
     const sqlQuery = `
       UPDATE partner_details
@@ -59,7 +61,8 @@ const handler = async (req, res) => {
         website = ?,
         updatedAt = CURRENT_TIMESTAMP
       WHERE
-        owner = ?;
+        owner = ?
+        and partnerId = ?;
     `;
 
     const params = [
@@ -75,7 +78,8 @@ const handler = async (req, res) => {
       contactNo,
       about,
       website,
-      decodedUser
+      decodedUser,
+      partnerId
     ];
 
     const result = await queryD1(sqlQuery, params);
