@@ -1,5 +1,5 @@
 import { allowCors, resUtil } from "../utils/utils";
-import supabaseClient from "../utils/supabaseClient"
+import supabaseClient from "../utils/supabaseClient";
 
 // Define Cloudflare D1 credentials
 const D1_API_URL = process.env.D1_API_URL;
@@ -16,7 +16,6 @@ async function queryD1(sqlQuery, params = []) {
     body: JSON.stringify({ sql: sqlQuery, params }),
   });
   const data = await response.json();
-  console.log('data', data)
 
   if (!response.ok) {
     throw new Error(
@@ -35,52 +34,70 @@ const handler = async (req, res) => {
       return;
     }
 
-    // Extract the required data from the request body
-    const { menuId, partnerId } = req.body;
+    // Extract the array of items from the request body
+    const items = req.body;
 
-    // Ensure all required fields are provided
-    if (!menuId || !partnerId) {
-      resUtil(res, 400, "Missing required fields: menuId or partnerId");
+    // Validate the payload
+    if (!Array.isArray(items) || items.length === 0) {
+      resUtil(res, 400, "Invalid payload: Expected a non-empty array of items");
       return;
     }
 
-    // SQL query to get item details from D1
+    // Prepare the SQL query for D1
     const sqlQuery = `
       SELECT itemName, price as itemPrice
       FROM menu
       WHERE menuId = ? AND partnerId = ?;
     `;
-    const params = [menuId, partnerId];
 
-    // Query D1 for menu details
-    const menuData = await queryD1(sqlQuery, params);
-    if (!(menuData.success && menuData.result?.[0]?.success)) {
-      console.error('Error in D1 API response:', data.errors);
-      throw new Error('D1 API query failed');
+    // Create an array to store item details for batch insert
+    const itemDetailsList = [];
+
+    // Query D1 for each item
+    for (const { menuId, partnerId } of items) {
+      if (!menuId || !partnerId) {
+        resUtil(
+          res,
+          400,
+          `Missing required fields for one or more items: menuId or partnerId`
+        );
+        return;
+      }
+
+      const params = [menuId, partnerId];
+      const menuData = await queryD1(sqlQuery, params);
+
+      if (!(menuData.success && menuData.result?.[0]?.success)) {
+        console.error("Error in D1 API response:", menuData.errors);
+        throw new Error("D1 API query failed");
+      }
+
+      const menuDetails = menuData.result[0].results;
+
+      // Ensure item details exist
+      if (!menuDetails || menuDetails.length === 0) {
+        resUtil(
+          res,
+          404,
+          `Menu item not found for menuId: ${menuId} and partnerId: ${partnerId}`
+        );
+        return;
+      }
+
+      // Add item details to the list
+      const { itemName, itemPrice } = menuDetails[0];
+      itemDetailsList.push({
+        partnerId,
+        menuId,
+        itemName,
+        itemPrice,
+      });
     }
-    const menuDetails = menuData.result[0].results
-    console.log('menuDetails', menuDetails)
 
-    // Ensure item details exist
-    if (!menuDetails || menuDetails.length === 0) {
-      resUtil(res, 404, "Menu item not found for the given menuId and partnerId");
-      return;
-    }
-
-    // Extract item details
-    const { itemName, itemPrice } = menuDetails[0];
-
-    // Insert the details into the Supabase database
+    // Insert all items into the Supabase database
     const { data, error } = await supabaseClient
       .from("order_items_live")
-      .insert([
-        {
-          partnerId,
-          menuId,
-          itemName,
-          itemPrice,
-        },
-      ]);
+      .insert(itemDetailsList);
 
     // Handle Supabase errors
     if (error) {
@@ -89,7 +106,7 @@ const handler = async (req, res) => {
 
     // Respond with success
     resUtil(res, 200, {
-      message: "Order created successfully.",
+      message: "Orders created successfully.",
       data,
     });
   } catch (error) {
