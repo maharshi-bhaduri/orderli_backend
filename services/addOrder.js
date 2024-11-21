@@ -54,12 +54,12 @@ const handler = async (req, res) => {
     const itemDetailsList = [];
 
     // Query D1 for each item
-    for (const { menuId, partnerId } of items) {
-      if (!menuId || !partnerId) {
+    for (const { menuId, partnerId, quantity, tableId } of items) {
+      if (!menuId || !partnerId || !quantity || !tableId) {
         resUtil(
           res,
           400,
-          `Missing required fields for one or more items: menuId or partnerId`
+          `Missing required fields for one or more items: menuId or partnerId or quantity or tableId`
         );
         return;
       }
@@ -91,6 +91,8 @@ const handler = async (req, res) => {
         menuId,
         itemName,
         itemPrice,
+        quantity,
+        tableId,
       });
     }
 
