@@ -7,7 +7,8 @@ DROP TABLE IF EXISTS tables;
 CREATE TABLE tables (
     tableId INTEGER PRIMARY KEY,
     partnerId INTEGER,
-    seatingCapacity INTEGER, 
+    seatingCapacity INTEGER,
+    localTableId INTEGER,
     status VARCHAR(20),
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
