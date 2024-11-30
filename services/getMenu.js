@@ -38,6 +38,7 @@ const handler = async (req, res) => {
     const { partnerHandle } = req.query;
 
     let partnerId;
+    let orderFlag = false; // Initialize orderFlag to false
 
     if (partnerHandle.startsWith("~")) {
       // Assume it's a table ID
@@ -48,12 +49,14 @@ const handler = async (req, res) => {
         WHERE tableId = ?;
       `;
       const tableResult = await queryD1(tableQuery, [tableId]);
-      if (!tableResult.result[0]?.results?.length) {
-        return resUtil(res, 404, "Table not found");
+      if (tableResult.result[0]?.results?.length) {
+        partnerId = tableResult.result[0].results[0].partnerId;
+        orderFlag = true; // Set orderFlag to true as table ID was found
       }
-      partnerId = tableResult.result[0].results[0].partnerId;
-    } else {
-      // Assume it's a partner handle
+    }
+
+    if (!partnerId) {
+      // If partnerId is not set from the table lookup, check for partner handle
       const partnerQuery = `
         SELECT partnerId FROM partner_details
         WHERE partnerHandle = ?;
@@ -72,7 +75,8 @@ const handler = async (req, res) => {
     `;
     const menuItems = await queryD1(menuQuery, [partnerId]);
 
-    resUtil(res, 200, null, menuItems.result[0].results);
+    // Return the menu and orderFlag
+    resUtil(res, 200, null, { menu: menuItems.result[0].results, orderFlag });
   } catch (error) {
     console.error("Error fetching menu items:", error);
     resUtil(res, 500, "An error occurred while fetching menu items");
