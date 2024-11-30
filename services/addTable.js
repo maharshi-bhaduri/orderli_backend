@@ -44,7 +44,6 @@ const handler = async (req, res) => {
 
     const data = await queryD1(sqlQuery, params);
     if (data) {
-      console.log("tables created");
       resUtil(res, 200, "tables have been created");
     }
   } catch (error) {
