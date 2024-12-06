@@ -27,14 +27,15 @@ async function queryD1(sqlQuery, params = []) {
 
 const handler = async (req, res) => {
   try {
-    const { partnerId, noOfTables, seatCapacity } = req.body;
+    const { partnerId, noOfTables, seatingCapacity } = req.body;
+    console.log(noOfTables, seatingCapacity);
     const status = "Available";
     // Prepare the SQL query and parameters for batch execution
     const sqlValues = [];
     const params = [];
     for (let i = 0; i < noOfTables; i++) {
       sqlValues.push(`(?,?,?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`);
-      params.push(partnerId, seatCapacity, status);
+      params.push(partnerId, seatingCapacity, status);
     }
 
     const sqlQuery = `

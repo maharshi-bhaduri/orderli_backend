@@ -28,14 +28,14 @@ async function queryD1(sqlQuery, params = []) {
 const handler = async (req, res) => {
   try {
     // Extract the required data from the request body
-    const { partnerId, tableId, status } = req.body;
+    const { partnerId, tableId, status, seatingCapacity } = req.body;
 
     // Ensure all required fields are available
     if (!partnerId || !tableId || !status) {
       resUtil(
         res,
         400,
-        "Missing required fields: partnerId, tableId, or status111"
+        "Missing required fields: partnerId, tableId, or status"
       );
       return;
     }
@@ -43,24 +43,24 @@ const handler = async (req, res) => {
     // SQL query to update the status of the table for the given partnerId and tableId
     const sqlQuery = `
       UPDATE tables
-      SET status = ?
+      SET status = ?, seatingCapacity = ?
       WHERE partnerId = ? AND tableId = ?;
     `;
 
     // Parameters for the SQL query
-    const params = [status, partnerId, tableId];
+    const params = [status, seatingCapacity, partnerId, tableId];
 
     // Execute the query
     const data = await queryD1(sqlQuery, params);
 
     if (data) {
       console.log(
-        `Table status updated for partnerId: ${partnerId}, tableId: ${tableId}`
+        `Table updated for partnerId: ${partnerId}, tableId: ${tableId}`
       );
-      resUtil(res, 200, "Table status has been updated successfully.");
+      resUtil(res, 200, "Table has been updated successfully.");
     }
   } catch (error) {
-    console.log("Error updating table status:", error);
+    console.log("Error updating table :", error);
     resUtil(
       res,
       500,
