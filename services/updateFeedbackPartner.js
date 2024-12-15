@@ -26,41 +26,35 @@ async function queryD1(sqlQuery, params = []) {
 }
 
 const handler = async (req, res) => {
+  console.log("update");
   try {
     // Extract the required data from the request body
-    const { partnerId, tableId, status, seatingCapacity } = req.body;
+    const { approveList, deleteList } = req.body;
 
     // Ensure all required fields are available
-    if (!partnerId || !tableId || !status) {
-      resUtil(
-        res,
-        400,
-        "Missing required fields: partnerId, tableId, or status"
-      );
+    if (!approveList && !deleteList) {
+      resUtil(res, 400, "Missing approveList and deleteList");
       return;
     }
 
-    // SQL query to update the status of the table for the given partnerId and tableId
-    const sqlQuery = `
-      UPDATE tables
-      SET status = ?, seatingCapacity = ?
-      WHERE partnerId = ? AND tableId = ?;
-    `;
-
-    // Parameters for the SQL query
-    const params = [status, seatingCapacity, partnerId, tableId];
-
-    // Execute the query
-    const data = await queryD1(sqlQuery, params);
-
-    if (data) {
-      console.log(
-        `Table updated for partnerId: ${partnerId}, tableId: ${tableId}`
-      );
-      resUtil(res, 200, "Table has been updated successfully.");
+    if (approveList && approveList.length > 0) {
+      const sqlQuery = `UPDATE feedback SET isApproved=1 WHERE feedbackId IN (${approveList
+        .map(() => "?")
+        .join(",")})`;
+      await queryD1(sqlQuery, approveList);
     }
+
+    if (deleteList && deleteList.length > 0) {
+      const sqlQuery = `DELETE FROM feedback WHERE feedbackId IN (${deleteList
+        .map(() => "?")
+        .join(",")})`;
+      await queryD1(sqlQuery, deleteList);
+    }
+    // respond with success
+
+    resUtil(res, 200, "Feedbacks updated successfully");
   } catch (error) {
-    console.log("Error updating table :", error);
+    console.log("Error processing feedback entries :", error);
     resUtil(
       res,
       500,
