@@ -39,7 +39,7 @@ const handler = async (req, res) => {
     const sqlQuery = `
             SELECT 
             f.partnerId, f.feedbackId, f.consumerName, f.consumerEmail, f.consumerPhone, f.rating, f.feedbackComments, 
-            f.createdAt, f.updatedAt 
+            f.createdAt, f.updatedAt , f.isApproved
             FROM
               feedback AS f 
             JOIN 
