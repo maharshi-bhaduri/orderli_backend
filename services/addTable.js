@@ -1,4 +1,4 @@
-import { allowCors, resUtil } from "../utils/utils";
+import { allowCors, resUtil, verifyAuth } from "../utils/utils";
 
 // Define your Cloudflare D1 credentials and endpoint
 const D1_API_URL = process.env.D1_API_URL;
@@ -27,10 +27,13 @@ async function queryD1(sqlQuery, params = []) {
 
 const handler = async (req, res) => {
   try {
-    const { partnerId, noOfTables, seatingCapacity } = req.body;
+    const { partnerHandle, noOfTables, seatingCapacity } = req.body;
     console.log(noOfTables, seatingCapacity);
     const status = "Available";
     // Prepare the SQL query and parameters for batch execution
+    const partnerIdQuery = `select partnerId from partner_details where partnerHandle=?`;
+    const partnerIdData = await queryD1(partnerIdQuery, [partnerHandle]);
+    const partnerId = partnerIdData.result?.[0]?.results[0]?.partnerId;
     const sqlValues = [];
     const params = [];
     for (let i = 0; i < noOfTables; i++) {
@@ -57,4 +60,4 @@ const handler = async (req, res) => {
   }
 };
 
-module.exports = allowCors(handler);
+module.exports = allowCors(verifyAuth(handler));

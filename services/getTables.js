@@ -31,22 +31,23 @@ async function fetchFromD1(sqlQuery, params = []) {
 const handler = async (req, res) => {
   try {
     const userId = req.headers.decodedUser;
-    const partnerId = req.query.partnerId;
-    if (!partnerId) {
-      return res.status(400).json({ Error: "partnerId is required" });
+    const partnerHandle = req.query.partnerHandle;
+    if (!partnerHandle) {
+      return res.status(400).json({ Error: "partnerHandle is required" });
     }
-    // Construct SQL query for fetching feedback based on partnerHandle and userId
+
+    // Construct SQL query for fetching tables based on partnerHandle and userId
     const sqlQuery = `
             SELECT 
             t.partnerId, t.tableId, t.seatingCapacity, t.status,t.createdAt, t.updatedAt 
             FROM
               tables AS t
             JOIN 
-              partner_details AS p ON t.partnerId=p.partnerId where p.partnerId = ? AND p.owner= ?
+              partner_details AS p ON t.partnerId=p.partnerId where p.partnerHandle = ? AND p.owner= ?
               `;
 
     // Fetch data from Cloudflare D1
-    const data = await fetchFromD1(sqlQuery, [partnerId, userId]);
+    const data = await fetchFromD1(sqlQuery, [partnerHandle, userId]);
 
     if (data.success && data.result?.[0]?.success) {
       res.status(200).json(data.result[0].results);
