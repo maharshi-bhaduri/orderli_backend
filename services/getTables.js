@@ -50,14 +50,25 @@ const handler = async (req, res) => {
     const data = await fetchFromD1(sqlQuery, [partnerHandle, userId]);
 
     if (data.success && data.result?.[0]?.success) {
-      res.status(200).json(data.result[0].results);
+      resUtil(
+        res,
+        200,
+        "Table has been updated successfully.",
+        data.result[0].results
+      );
+
+      //res.status(200).json(data.result[0].results);
     } else {
       console.error("Error in D1 API response:", data.errors);
       throw new Error("D1 API query failed");
     }
   } catch (error) {
-    console.error("Error fetching partners:", error);
-    res.status(500).json({ Error: "Request could not be processed." });
+    console.error("Error fetching tables:", error);
+    resUtil(
+      res,
+      500,
+      `Request could not be processed. Error: ${error.message || error}`
+    );
   }
 };
 
