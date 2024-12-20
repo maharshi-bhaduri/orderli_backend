@@ -28,17 +28,20 @@ async function queryD1(sqlQuery, params = []) {
 const handler = async (req, res) => {
   try {
     // Extract the required data from the request body
-    const { partnerId, tableId, status, seatingCapacity } = req.body;
+    const { partnerHandle, tableId, status, seatingCapacity } = req.body;
 
     // Ensure all required fields are available
-    if (!partnerId || !tableId || !status) {
+    if (!partnerHandle || !tableId || !status) {
       resUtil(
         res,
         400,
-        "Missing required fields: partnerId, tableId, or status"
+        "Missing required fields: partnerHandle, tableId, or status"
       );
       return;
     }
+    const partnerIdQuery = `select partnerId from partner_details where partnerHandle=?`;
+    const partnerIdData = await queryD1(partnerIdQuery, [partnerHandle]);
+    const partnerId = partnerIdData.result?.[0]?.results[0]?.partnerId;
 
     // SQL query to update the status of the table for the given partnerId and tableId
     const sqlQuery = `
