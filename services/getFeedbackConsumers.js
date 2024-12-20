@@ -39,7 +39,7 @@ const handler = async function (req, res) {
   let partnerId;
   let orderFlag = false; // Initialize orderFlag to false
 
-  console.log("inside get feedback for consumer");
+  //console.log("inside get feedback for consumer");
   try {
     const partnerHandle = req.query.partnerHandle;
     if (!partnerHandle) {

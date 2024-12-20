@@ -27,8 +27,20 @@ async function queryD1(sqlQuery, params = []) {
   }
   return data;
 }
+// Function to decode Base62 to Base10
+function fromBase62(base62) {
+  const characters =
+    "~123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  let num = 0;
+  for (const char of base62) {
+    num = num * 62 + characters.indexOf(char);
+  }
+  return num;
+}
 
 const handler = async (req, res) => {
+  let partnerId;
+
   try {
     const {
       partnerHandle,
@@ -38,16 +50,38 @@ const handler = async (req, res) => {
       rating,
       feedbackComments,
     } = req.body;
-    const sqlQueryForPartner = `SELECT partnerId from partner_details where partnerHandle = ?`;
-    const partner = await queryD1(sqlQueryForPartner, [partnerHandle]);
-    if (!partner || partner.length === 0) {
-      return resUtil(res, 400, "Unauthorized.");
+    if (!partnerHandle) {
+      return res.status(400).json({ Error: "partner handle is required" });
     }
 
-    const partnerId = partner.result[0].results[0].partnerId;
+    if (partnerHandle.startsWith("~")) {
+      // Assume it's a table ID
+      const base62Id = partnerHandle.slice(1); // Remove '~'
+      const tableId = fromBase62(base62Id); // Decode Base62 to Base10
+      const tableQuery = `
+            SELECT partnerId FROM tables
+            WHERE tableId = ?;
+          `;
+      const tableResult = await queryD1(tableQuery, [tableId]);
+      if (tableResult.result[0]?.results?.length) {
+        partnerId = tableResult.result[0].results[0].partnerId;
+      }
+    }
+    if (!partnerId) {
+      // If partnerId is not set from the table lookup, check for partner handle
+      const partnerQuery = `
+                SELECT partnerId FROM partner_details
+                WHERE partnerHandle = ?;
+              `;
+      const partnerResult = await queryD1(partnerQuery, [partnerHandle]);
+      if (!partnerResult.result[0]?.results?.length) {
+        return resUtil(res, 404, "Partner not found");
+      }
+      partnerId = partnerResult.result[0].results[0].partnerId;
+    }
     const sqlQuery = `INSERT INTO feedback 
-    (partnerId, consumerName, consumerEmail, consumerPhone, rating,feedbackComments, createdAt, updatedAt)
-    VALUES (?,?,?,?,?,?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`;
+    (partnerId, consumerName, consumerEmail, consumerPhone, rating,feedbackComments, createdAt, updatedAt, isApproved)
+    VALUES (?,?,?,?,?,?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,0)`;
     const params = [
       partnerId,
       consumerName,
