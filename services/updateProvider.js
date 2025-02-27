@@ -3,15 +3,15 @@ import { allowCors, resUtil, verifyAuth } from "../utils/utils";
 // Function to query Cloudflare D1 REST API
 async function queryD1(sqlQuery, params = []) {
   const response = await fetch(process.env.D1_API_URL, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Authorization': `Bearer ${process.env.D1_API_KEY}`,
-      'Content-Type': 'application/json'
+      Authorization: `Bearer ${process.env.D1_API_KEY}`,
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       sql: sqlQuery,
-      params
-    })
+      params,
+    }),
   });
 
   const data = await response.json();
@@ -25,19 +25,22 @@ async function queryD1(sqlQuery, params = []) {
 const handler = async (req, res) => {
   try {
     const {
-      partnerId = '',
-      partnerName = '',
-      partnerType = '',
-      partnerHandle = '',
-      address = '',
-      city = '',
-      state = '',
-      country = '',
-      postalCode = '',
-      contactNo = '',
-      owner = '',
-      about = '',
-      website = ''
+      partnerId = "",
+      partnerName = "",
+      partnerType = "",
+      partnerHandle = "",
+      address = "",
+      city = "",
+      state = "",
+      country = "",
+      postalCode = "",
+      contactNo = "",
+      owner = "",
+      about = "",
+      website = "",
+      social1 = "",
+      social2 = "",
+      social3 = "",
     } = req.body;
 
     const decodedUser = req.headers.decodedUser;
@@ -56,6 +59,9 @@ const handler = async (req, res) => {
         contactNo = ?,
         about = ?,
         website = ?,
+        social1 = ?,
+        social2 = ?,
+        social3 = ?,
         updatedAt = CURRENT_TIMESTAMP
       WHERE
         owner = ?
@@ -75,8 +81,11 @@ const handler = async (req, res) => {
       contactNo,
       about,
       website,
+      social1,
+      social2,
+      social3,
       decodedUser,
-      partnerId
+      partnerId,
     ];
 
     const result = await queryD1(sqlQuery, params);
