@@ -1,4 +1,4 @@
-import { allowCors, resUtil, verifyAuth } from "../utils/utils";
+import { allowCors, resUtil, verifyAuth, toBase62 } from "../utils/utils";
 
 // Define your Cloudflare D1 credentials and endpoint
 const D1_API_URL = process.env.D1_API_URL;
@@ -50,12 +50,11 @@ const handler = async (req, res) => {
     const data = await fetchFromD1(sqlQuery, [partnerHandle, userId]);
 
     if (data.success && data.result?.[0]?.success) {
-      resUtil(
-        res,
-        200,
-        "Table has been updated successfully.",
-        data.result[0].results
-      );
+      const updatedResults = data.result[0].results.map((result) => ({
+        ...result,
+        suffix: toBase62(result.tableId),
+      }));
+      resUtil(res, 200, "Table has been updated successfully.", updatedResults);
 
       //res.status(200).json(data.result[0].results);
     } else {
