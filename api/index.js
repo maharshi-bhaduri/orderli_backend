@@ -22,6 +22,7 @@ const updateTable = require("../services/updateTable");
 const addOrder = require("../services/addOrder");
 const updateOrderPartner = require("../services/updateOrderPartner");
 const updateFeedbackPartner = require("../services/updateFeedbackPartner");
+const updateConfig = require("../services/updateConfig");
 const router = Router();
 
 router.post("/api/create-provider", createProvider);
@@ -46,6 +47,7 @@ router.post("/api/update-table", updateTable);
 router.post("/api/add-order", addOrder);
 router.post("/api/update-order-partner", updateOrderPartner);
 router.post("/api/update-feedback-partner", updateFeedbackPartner);
+router.post("/api/update-config", updateConfig);
 
 function getRoutes(req, res) {
   router(req, res, finalhandler(req, res));
