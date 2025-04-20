@@ -41,6 +41,24 @@ const handler = async (req, res) => {
       return;
     }
 
+    // ✅ Check if a "bill_requested" alert already exists for this table
+    const { data: existingAlert, error: checkError } = await supabaseClient
+      .from("table_alerts_live")
+      .select("id")
+      .eq("tableId", tableId)
+      .eq("alertType", "bill_requested")
+      .maybeSingle();
+
+    if (checkError) {
+      throw new Error(`Error checking existing alert: ${checkError.message}`);
+    }
+
+    // 🔁 If alert already exists, skip feedback and respond
+    if (existingAlert) {
+      resUtil(res, 200, { message: "Bill request submitted successfully." });
+      return;
+    }
+
     // 1️⃣ Insert into Supabase `table_alerts_live`
     const { error: supabaseError } = await supabaseClient
       .from("table_alerts_live")
@@ -73,7 +91,7 @@ const handler = async (req, res) => {
       await queryD1(sqlQuery, downvoteIds);
     }
 
-    // Respond with success
+    // ✅ Final response
     resUtil(res, 200, { message: "Bill request submitted successfully." });
 
   } catch (error) {
