@@ -26,22 +26,18 @@ async function queryD1(sqlQuery, params = []) {
 // Handler for "Request Bill" API
 const handler = async (req, res) => {
   try {
-    // Validate HTTP method
     if (req.method !== "POST") {
       resUtil(res, 405, "Method Not Allowed");
       return;
     }
 
-    // Extract required fields from request body
     const { tableId, feedback } = req.body;
-
-    // Validate payload
     if (!tableId || !feedback || typeof feedback !== "object") {
       resUtil(res, 400, "Invalid payload: tableId and feedback object required.");
       return;
     }
 
-    // ✅ Check if a "bill_requested" alert already exists for this table
+    // Check for existing alert
     const { data: existingAlert, error: checkError } = await supabaseClient
       .from("table_alerts_live")
       .select("id")
@@ -53,46 +49,109 @@ const handler = async (req, res) => {
       throw new Error(`Error checking existing alert: ${checkError.message}`);
     }
 
-    // 🔁 If alert already exists, skip feedback and respond
-    if (existingAlert) {
-      resUtil(res, 200, { message: "Bill request submitted successfully." });
-      return;
+    if (!existingAlert) {
+      // Insert bill_requested alert
+      const { error: supabaseError } = await supabaseClient
+        .from("table_alerts_live")
+        .insert([{ tableId, alertType: "bill_requested" }]);
+
+      if (supabaseError) {
+        throw new Error(`Supabase insert error: ${supabaseError.message}`);
+      }
     }
 
-    // 1️⃣ Insert into Supabase `table_alerts_live`
-    const { error: supabaseError } = await supabaseClient
-      .from("table_alerts_live")
-      .insert([{ tableId, alertType: "bill_requested" }]);
+    // ✅ Fetch order items
+    const { data: orderItems, error: orderError } = await supabaseClient
+      .from("order_items_live")
+      .select("menuId, itemName, quantity, itemPrice, partnerId")
+      .eq("tableId", tableId);
 
-    if (supabaseError) {
-      throw new Error(`Supabase insert error: ${supabaseError.message}`);
+    if (orderError) {
+      throw new Error(`Error fetching order items: ${orderError.message}`);
+    }
+    if (!orderItems || orderItems.length === 0) {
+      throw new Error(`No active order items found for tableId ${tableId}`);
     }
 
-    // 2️⃣ Group menuIds by upvotes and downvotes
-    const upvoteIds = [];
-    const downvoteIds = [];
+    const partnerId = orderItems[0].partnerId; // assume all from same partner
 
-    for (const [menuId, vote] of Object.entries(feedback)) {
-      if (vote === 1) upvoteIds.push(menuId);
-      if (vote === 0) downvoteIds.push(menuId);
+    // ✅ Calculate subtotal
+    let subTotal = 0;
+    orderItems.forEach(item => {
+      subTotal += (item.itemPrice || 0) * (item.quantity || 1);
+    });
+
+    // ✅ Fetch billing details
+    const billingQuery = `SELECT * FROM billing_details WHERE partnerId = ? LIMIT 1`;
+    const billingDetails = await queryD1(billingQuery, [partnerId]);
+    const billingInfo = billingDetails?.result?.[0]?.results?.[0] || {};
+
+    let totalCharges = 0;
+    let totalDiscounts = 0;
+    let chargeBreakdown = [];
+    let discountBreakdown = [];
+    console.log("billingDetails", billingDetails?.result?.[0]?.results?.[0])
+
+
+    // ✅ Handle charges
+    if (billingInfo.charges) {
+      console.log("charges present");
+      try {
+        const charges = JSON.parse(billingInfo.charges);
+        charges.forEach(charge => {
+          const value = parseFloat(charge.value || 0);
+          let amount = 0;
+          if (charge.type === "%") {
+            amount = (subTotal * value) / 100;
+          } else {
+            amount = value;
+          }
+          console.log('charges :', totalCharges)
+          totalCharges += amount;
+          chargeBreakdown.push({ label: charge.label, amount, optional: charge.optional });
+        });
+      } catch (err) {
+        console.error("Error parsing charges JSON:", err);
+      }
     }
 
-    // 3️⃣ Update upvotes in a single query if applicable
-    if (upvoteIds.length > 0) {
-      const placeholders = upvoteIds.map(() => "?").join(", ");
-      const sqlQuery = `UPDATE menu SET upvotes = COALESCE(upvotes, 0) + 1 WHERE menuId IN (${placeholders})`;
-      await queryD1(sqlQuery, upvoteIds);
+    // ✅ Handle discounts
+    if (billingInfo.discounts) {
+      try {
+        const discounts = JSON.parse(billingInfo.discounts);
+        discounts.forEach(discount => {
+          const value = parseFloat(discount.value || 0);
+          let amount = 0;
+          if (discount.type === "%") {
+            amount = (subTotal * value) / 100;
+          } else {
+            amount = value;
+          }
+          totalDiscounts += amount;
+          discountBreakdown.push({ label: discount.label, amount });
+        });
+      } catch (err) {
+        console.error("Error parsing discounts JSON:", err);
+      }
     }
 
-    // 4️⃣ Update downvotes in a single query if applicable
-    if (downvoteIds.length > 0) {
-      const placeholders = downvoteIds.map(() => "?").join(", ");
-      const sqlQuery = `UPDATE menu SET downvotes = COALESCE(downvotes, 0) + 1 WHERE menuId IN (${placeholders})`;
-      await queryD1(sqlQuery, downvoteIds);
-    }
+    const grandTotal = subTotal + totalCharges - totalDiscounts;
 
-    // ✅ Final response
-    resUtil(res, 200, { message: "Bill request submitted successfully." });
+    // ✅ Prepare final bill object
+    const billData = {
+      items: orderItems.map(item => ({
+        itemName: item.itemName,
+        quantity: item.quantity,
+        itemPrice: item.itemPrice,
+      })),
+      subTotal,
+      charges: chargeBreakdown,      // [{ label: 'Service Charge', amount: 90 }, { label: 'GST', amount: 45 }]
+      discounts: discountBreakdown,  // [{ label: 'Promo10', amount: 100 }]
+      grandTotal,
+    };
+
+    // ✅ Respond back with bill JSON
+    resUtil(res, 200, { message: "Bill request submitted successfully.", bill: billData });
 
   } catch (error) {
     console.error("Error processing request:", error);
