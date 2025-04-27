@@ -39,7 +39,7 @@ const handler = async (req, res) => {
     // Construct SQL query for fetching tables based on partnerHandle and userId
     const sqlQuery = `
             SELECT 
-            t.partnerId, t.tableId, t.seatingCapacity, t.status,t.createdAt, t.updatedAt 
+            t.partnerId, t.tableId, t.seatingCapacity, t.status,t.createdAt, t.updatedAt , t.checkinCode
             FROM
               tables AS t
             JOIN 

@@ -25,6 +25,7 @@ const updateFeedbackPartner = require("../services/updateFeedbackPartner");
 const updateConfig = require("../services/updateConfig");
 const requestBill = require("../services/requestBill");
 const getBillConfig = require("../services/getBillConfig");
+const verifyCheckinCode = require("../services/verifyCheckinCode");
 const router = Router();
 
 router.post("/api/create-provider", createProvider);
@@ -52,6 +53,7 @@ router.post("/api/update-feedback-partner", updateFeedbackPartner);
 router.post("/api/update-config", updateConfig);
 router.post("/api/request-bill", requestBill);
 router.get("/api/get-bill-config", getBillConfig);
+router.get("/api/verify-checkin-code", verifyCheckinCode);
 
 function getRoutes(req, res) {
   router(req, res, finalhandler(req, res));
