@@ -24,6 +24,9 @@ async function queryD1(sqlQuery, params = []) {
   }
   return data;
 }
+function generateCheckinCode() {
+  return Math.floor(100000000 + Math.random() * 90000000).toString();
+}
 
 const handler = async (req, res) => {
   try {
@@ -37,13 +40,14 @@ const handler = async (req, res) => {
     const sqlValues = [];
     const params = [];
     for (let i = 0; i < noOfTables; i++) {
-      sqlValues.push(`(?,?,?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`);
-      params.push(partnerId, seatingCapacity, status);
+      let checkinCode = generateCheckinCode();
+      sqlValues.push(`(?,?,?,?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`);
+      params.push(partnerId, seatingCapacity, status, checkinCode);
     }
 
     const sqlQuery = `
       INSERT INTO tables
-      (partnerId, seatingCapacity, status, createdAt, updatedAt)
+      (partnerId, seatingCapacity, status, checkinCode, createdAt, updatedAt)
       VALUES ${sqlValues.join(", ")}`;
 
     const data = await queryD1(sqlQuery, params);
