@@ -18,7 +18,9 @@ async function queryD1(sqlQuery, params = []) {
 
   const data = await response.json();
   if (!response.ok) {
-    throw new Error(`Error querying D1: ${JSON.stringify(data.errors || data)}`);
+    throw new Error(
+      `Error querying D1: ${JSON.stringify(data.errors || data)}`
+    );
   }
   return data;
 }
@@ -33,7 +35,11 @@ const handler = async (req, res) => {
 
     const { tableId, feedback } = req.body;
     if (!tableId || !feedback || typeof feedback !== "object") {
-      resUtil(res, 400, "Invalid payload: tableId and feedback object required.");
+      resUtil(
+        res,
+        400,
+        "Invalid payload: tableId and feedback object required."
+      );
       return;
     }
 
@@ -77,7 +83,7 @@ const handler = async (req, res) => {
 
     // ✅ Calculate subtotal
     let subTotal = 0;
-    orderItems.forEach(item => {
+    orderItems.forEach((item) => {
       subTotal += (item.itemPrice || 0) * (item.quantity || 1);
     });
 
@@ -90,15 +96,14 @@ const handler = async (req, res) => {
     let totalDiscounts = 0;
     let chargeBreakdown = [];
     let discountBreakdown = [];
-    console.log("billingDetails", billingDetails?.result?.[0]?.results?.[0])
-
+    console.log("billingDetails", billingDetails?.result?.[0]?.results?.[0]);
 
     // ✅ Handle charges
     if (billingInfo.charges) {
       console.log("charges present");
       try {
         const charges = JSON.parse(billingInfo.charges);
-        charges.forEach(charge => {
+        charges.forEach((charge) => {
           const value = parseFloat(charge.value || 0);
           let amount = 0;
           if (charge.type === "%") {
@@ -106,9 +111,13 @@ const handler = async (req, res) => {
           } else {
             amount = value;
           }
-          console.log('charges :', totalCharges)
+          console.log("charges :", totalCharges);
           totalCharges += amount;
-          chargeBreakdown.push({ label: charge.label, amount, optional: charge.optional });
+          chargeBreakdown.push({
+            label: charge.label,
+            amount,
+            optional: charge.optional,
+          });
         });
       } catch (err) {
         console.error("Error parsing charges JSON:", err);
@@ -119,7 +128,7 @@ const handler = async (req, res) => {
     if (billingInfo.discounts) {
       try {
         const discounts = JSON.parse(billingInfo.discounts);
-        discounts.forEach(discount => {
+        discounts.forEach((discount) => {
           const value = parseFloat(discount.value || 0);
           let amount = 0;
           if (discount.type === "%") {
@@ -139,23 +148,30 @@ const handler = async (req, res) => {
 
     // ✅ Prepare final bill object
     const billData = {
-      items: orderItems.map(item => ({
+      items: orderItems.map((item) => ({
         itemName: item.itemName,
         quantity: item.quantity,
         itemPrice: item.itemPrice,
       })),
       subTotal,
-      charges: chargeBreakdown,      // [{ label: 'Service Charge', amount: 90 }, { label: 'GST', amount: 45 }]
-      discounts: discountBreakdown,  // [{ label: 'Promo10', amount: 100 }]
+      charges: chargeBreakdown, // [{ label: 'Service Charge', amount: 90 }, { label: 'GST', amount: 45 }]
+      discounts: discountBreakdown, // [{ label: 'Promo10', amount: 100 }]
       grandTotal,
+      upiId: billingInfo?.upiId,
     };
 
     // ✅ Respond back with bill JSON
-    resUtil(res, 200, { message: "Bill request submitted successfully.", bill: billData });
-
+    resUtil(res, 200, {
+      message: "Bill request submitted successfully.",
+      bill: billData,
+    });
   } catch (error) {
     console.error("Error processing request:", error);
-    resUtil(res, 500, `Request could not be processed. Error: ${error.message || error}`);
+    resUtil(
+      res,
+      500,
+      `Request could not be processed. Error: ${error.message || error}`
+    );
   }
 };
 
